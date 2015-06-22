@@ -1,0 +1,173 @@
+#!/usr/bin/env node
+var fs = require('fs')
+  , util = require('util')
+  , p = require('commander')
+  , _ = require('underscore')
+  , pkginfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json'))
+  , ver = pkginfo.version
+  , log = require('nodeutil').simplelog
+  , metric = require('../lib');
+
+p.version(ver)
+  .option('-p, --project <project>', 'google cloud platform project id')
+  .option('-s, --service_account <service_account>', 'service account email')
+  .option('-k, --key <key>', 'service account pem key')
+  .option('-t, --type <type>', 'auth | init | simple | labeled')
+  .option('-n, --name <name>', 'metric name')
+  .option('-i, --id <id>', 'metrics id')
+  .option('-d, --data <data>', 'metrics data value')
+  .option('-j, --jsondata <jsondata>', 'metrics original json data')
+  .option('-l, --loglevel <loglevel>', 'log level')
+  .parse(process.argv);
+
+var cacheCfgPath = '/tmp/gauth.cfg';
+//var loglevel = p.loglevel||process.env['LOG_LEVEL']||'INFO';
+
+/* setup log level */
+//log.setLevel(loglevel);
+
+var project = null;
+var cachedCfg = {};
+
+if(fs.existsSync(cacheCfgPath)) {
+  cachedCfg = JSON.parse(fs.readFileSync(cacheCfgPath, 'utf8'));
+  project = cachedCfg['project'];
+  log.debug('Got cahcedCfg:', cachedCfg);
+}
+
+function auth(callback){
+  //TODO: more check
+  var opts = {};
+  if(!fs.existsSync(cacheCfgPath)) {
+		opts = {
+			scope: 'https://www.googleapis.com/auth/monitoring',
+			client_email: p.service_account,
+			key_pem: p.key
+		};
+  } else {
+    opts = JSON.parse(fs.readFileSync(cacheCfgPath, 'utf8'));
+  }
+  metric.init(opts);
+  opts.project = p.project;
+
+  //write config to file
+  if(p.service_account && p.key)
+    fs.writeFileSync(cacheCfgPath, JSON.stringify(opts));
+  
+  //metric.listMetricDescriptors(p.project)
+  if(callback) callback();
+}
+
+
+/**
+ * Create metric with 
+ */
+function init(project, metric_name, id, desc) {
+  if(!id) {
+    return metric.createMetricDescriptor(project, metric_name, null, commonCb);
+  } 
+
+  var labelscfg = [{
+     "key": "custom.cloudmonitoring.googleapis.com/" + id,
+     "description": desc
+    }]
+  metric.createMetricDescriptor(project, metric_name, labelscfg, commonCb);
+}
+
+/**
+ * Create metric with full json configure
+ * ex: [{
+ *    "key": "custom.cloudmonitoring.googleapis.com/" + id,
+ *    "description": "A store ID."
+ *  },{
+ *    "key": "custom.cloudmonitoring.googleapis.com/test" ,
+ *    "description": "A test ID."
+ *  }]
+ */
+function initWithCfg(project, metric_name, labelscfg) {
+  log.debug('Got init info proj:%s, metric_name:%s:', project, metric_name, labelscfg);
+  metric.createMetricDescriptor(project, metric_name, labelscfg, commonCb);
+}
+
+exports.createSimpleMetric = createSimpleMetric;
+function createSimpleMetric(metric_name, time) {
+  metric.writeTimeSeries(metric_name, time);
+}
+
+console.log('>>>>>>>>>>>>>', typeof(p.jsondata));
+
+switch(p.type) {
+  case 'auth':
+    //need service_account and pem for auth
+		if(!p.key || !p.service_account) 
+			return log.error('Authenticateion cannot complete, pem key file or service account failed.');
+    auth();
+    break;
+
+  case 'init':
+    //create the metrics
+    auth(function() {
+			if( p.name && p.id)
+				init(project, p.name, p.id, p.data);
+			else if( p.name && p.jsondata)
+				initWithCfg(project, p.name, JSON.parse(p.jsondata));
+      else if( p.name && !p.id)
+        init(project, p.name, null, p.data);
+      else
+        log.info('nothing to init...');
+    });
+    break;
+
+  case 'simple':
+    //create the metrics
+    auth(function() {
+      metric.writeTimeSeries(project, p.name, p.data);
+    });
+    break;
+
+  case 'labeled':
+    //create the metrics
+    auth(function() {
+      metric.writeTimeSeries(project, p.name, JSON.parse(p.jsondata), commonCb);
+    });
+    break;
+
+  case 'delete':
+    auth(function(){
+      metric.deleteMetric(p.project || project, p.name, function(e,r,d){
+        if(e) {
+					return log.error(e);
+        }
+        log.info(d);
+      });
+    });
+    break;
+
+  case 'get':
+    auth(function(){
+      metric.getMetric(p.project || project, p.name, function(e,r,d){
+        if(e) {
+					return log.error(e);
+        }
+        log.info(d);
+      });
+    });
+    break;
+  
+  case 'list':
+    auth(function(){
+      metric.listMetricDescriptors(p.project, function(e,r,d){
+        if(e) log.error(e);
+        log.info(d);
+      });
+    });
+  default:
+    console.log('no input...');
+    break;
+}
+
+
+function commonCb(e,r,d) {
+  if(e) return log.error('ERROR', e);
+  log.info(d);
+}
