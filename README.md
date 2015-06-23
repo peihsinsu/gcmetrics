@@ -23,6 +23,11 @@ gcmetric -t auth \
   -p mitac-cp300-taipei101
 ```
 
+In the command, the parameters are:
+* -s: the service account email
+* -k: the service account pem key
+* -p: the interactive project
+
 ## Lightweight metric
 
 ### Initial a lightweight  metric
@@ -60,12 +65,14 @@ gcmetric -t init -n mymetric2 -i firstid -d "test first id"
 gcmetric -t labeled -n mymetric2 -d 1234
 ```
 
-* -n:
-* -d:
+* -n: metric name
+* -d: the data write to the metric
 
 ## Metric Descriptor - Multiple id
 
 ### Initial a multiple metric descriptor
+
+You can create a multiple metric descriptor into a custom metric:
 
 ```
 gcmetric -t init -n mymetric3 -j '[{
@@ -76,6 +83,8 @@ gcmetric -t init -n mymetric3 -j '[{
      "description": "This is ID2."
     }]'
 ```
+
+In this case, you can write the id1 and id2 type of data into the metric: mymetric3.
 
 ### Write data to multiple metric descriptor
 
@@ -118,9 +127,13 @@ gcmetric -t custw \
 }'
 ```
 
+In the write customize metric data sample, you can write more timeseries in the array in one request. It helps for the performance.
+
 * -j: the json data that you want to input
 
 ## Delete a metric
+
+You can also delete the metric by using delete like:
 
 ```
 gcmetric -t delete -p mitac-cp300-taipei101 -n mymetric
@@ -130,6 +143,8 @@ gcmetric -t delete -p mitac-cp300-taipei101 -n mymetric
 * -p: project name
 
 ## Retrieve metric data
+
+For some reason, you may need to retrieve the metric data from the project. You can use the following sample for retrieve the data from command line.
 
 ### Get by metric
 
