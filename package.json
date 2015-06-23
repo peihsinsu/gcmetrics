@@ -1,6 +1,6 @@
 {
   "name": "gcmetrics",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Google Cloud Custom Metric command tool",
   "main": "lib/index.js",
   "bin": {
@@ -9,6 +9,7 @@
   "author": "Simon Su",
   "license": "ISC",
   "dependencies": {
+    "google-api-utility": "*",
     "commander": "^2.8.1",
     "nodeutil": "0.0.46",
     "request": "^2.57.0",
