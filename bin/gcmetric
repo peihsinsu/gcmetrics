@@ -32,7 +32,7 @@ var cachedCfg = {};
 if(fs.existsSync(cacheCfgPath)) {
   cachedCfg = JSON.parse(fs.readFileSync(cacheCfgPath, 'utf8'));
   project = cachedCfg['project'];
-  log.debug('Got cahcedCfg:', cachedCfg);
+  log.trace('Got cahcedCfg:', cachedCfg);
 }
 
 function auth(callback){
@@ -85,7 +85,7 @@ function init(project, metric_name, id, desc) {
  *  }]
  */
 function initWithCfg(project, metric_name, labelscfg) {
-  log.debug('Got init info proj:%s, metric_name:%s:', project, metric_name, labelscfg);
+  log.trace('Got init info proj:%s, metric_name:%s:', project, metric_name, labelscfg);
   metric.createMetricDescriptor(project, metric_name, labelscfg, commonCb);
 }
 
@@ -93,8 +93,6 @@ exports.createSimpleMetric = createSimpleMetric;
 function createSimpleMetric(metric_name, time) {
   metric.writeTimeSeries(metric_name, time);
 }
-
-console.log('>>>>>>>>>>>>>', typeof(p.jsondata));
 
 switch(p.type) {
   case 'auth':
@@ -121,46 +119,55 @@ switch(p.type) {
   case 'simple':
     //create the metrics
     auth(function() {
-      metric.writeTimeSeries(project, p.name, p.data);
+      metric.writeTimeSeries(project, p.name, p.data, null, null, null, commonCb);
     });
     break;
 
   case 'labeled':
     //create the metrics
     auth(function() {
-      metric.writeTimeSeries(project, p.name, JSON.parse(p.jsondata), commonCb);
+      metric.writeTimeSeries(
+        project, 
+        p.name, 
+        p.data, 
+        JSON.parse(p.jsondata),
+        null, 
+        null, 
+        commonCb);
+    });
+    break;
+  
+  case 'custw':
+    //customize write time series object
+    auth(function() {
+      metric.writeCustTimeSeriesData(
+        project, 
+        JSON.parse(p.jsondata),
+        commonCb);
     });
     break;
 
   case 'delete':
     auth(function(){
-      metric.deleteMetric(p.project || project, p.name, function(e,r,d){
-        if(e) {
-					return log.error(e);
-        }
-        log.info(d);
-      });
+      metric.deleteMetric(p.project || project, p.name, commonCb);
     });
     break;
 
   case 'get':
     auth(function(){
-      metric.getMetric(p.project || project, p.name, function(e,r,d){
-        if(e) {
-					return log.error(e);
-        }
-        log.info(d);
-      });
+      metric.getMetric(p.project || project, 
+        p.name, 
+        (p.data ? p.data : null),
+        commonCb);
     });
     break;
   
   case 'list':
     auth(function(){
-      metric.listMetricDescriptors(p.project, function(e,r,d){
-        if(e) log.error(e);
-        log.info(d);
-      });
+      metric.listMetricDescriptors(p.project, commonCb);
     });
+    break;
+
   default:
     console.log('no input...');
     break;
@@ -168,6 +175,7 @@ switch(p.type) {
 
 
 function commonCb(e,r,d) {
-  if(e) return log.error('ERROR', e);
-  log.info(d);
+  if(e) 
+    return log.error('ERROR', JSON.stringify(e));
+  console.log((d));
 }
