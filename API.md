@@ -27,17 +27,13 @@ metric.init({
 ## Create lightweight metric
 
 ```
-var labelscfg = [{
-	 "key": "custom.cloudmonitoring.googleapis.com/" + id,
-	 "description": desc
-	}]
-metric.createMetricDescriptor(project, metric_name, labelscfg, function(err, req, doc){
+metric.createMetricDescriptor(project, metric_name, null, function(err, req, doc){
   if(err) console.log('ERROR:', e);
   console.log(doc);
 });
 ```
 
-## Create metric descriptor
+## Create labeled metric
 
 ```
 var id = process.argv[3];
