@@ -21,11 +21,6 @@ p.version(ver)
   .parse(process.argv);
 
 var cacheCfgPath = '/tmp/gauth.cfg';
-//var loglevel = p.loglevel||process.env['LOG_LEVEL']||'INFO';
-
-/* setup log level */
-//log.setLevel(loglevel);
-
 var project = null;
 var cachedCfg = {};
 

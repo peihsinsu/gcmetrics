@@ -185,6 +185,9 @@ gcmetric -h
     -l, --loglevel <loglevel>                log level
 ```
 
+## API docs
+
+* See [API.md](API.md) for using this API in code.
 
 ## Hint
 
