@@ -22,7 +22,7 @@ metric.init({
     });
 ```
 
-# Create metrics
+# Create metrics and write data
 
 ## Create lightweight metric
 
