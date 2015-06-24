@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* @flow */
 var fs = require('fs')
   , util = require('util')
   , p = require('commander')
@@ -48,19 +49,19 @@ function auth(callback){
   //write config to file
   if(p.service_account && p.key)
     fs.writeFileSync(cacheCfgPath, JSON.stringify(opts));
-  
+
   //metric.listMetricDescriptors(p.project)
   if(callback) callback();
 }
 
 
 /**
- * Create metric with 
+ * Create metric with
  */
 function init(project, metric_name, id, desc) {
   if(!id) {
     return metric.createMetricDescriptor(project, metric_name, null, commonCb);
-  } 
+  }
 
   var labelscfg = [{
      "key": "custom.cloudmonitoring.googleapis.com/" + id,
@@ -92,7 +93,7 @@ function createSimpleMetric(metric_name, time) {
 switch(p.type) {
   case 'auth':
     //need service_account and pem for auth
-		if(!p.key || !p.service_account) 
+		if(!p.key || !p.service_account)
 			return log.error('Authenticateion cannot complete, pem key file or service account failed.');
     auth();
     break;
@@ -122,21 +123,21 @@ switch(p.type) {
     //create the metrics
     auth(function() {
       metric.writeTimeSeries(
-        project, 
-        p.name, 
-        p.data, 
+        project,
+        p.name,
+        p.data,
         JSON.parse(p.jsondata),
-        null, 
-        null, 
+        null,
+        null,
         commonCb);
     });
     break;
-  
+
   case 'custw':
     //customize write time series object
     auth(function() {
       metric.writeCustTimeSeriesData(
-        project, 
+        project,
         JSON.parse(p.jsondata),
         commonCb);
     });
@@ -150,13 +151,13 @@ switch(p.type) {
 
   case 'get':
     auth(function(){
-      metric.getMetric(p.project || project, 
-        p.name, 
+      metric.getMetric(p.project || project,
+        p.name,
         (p.data ? p.data : null),
         commonCb);
     });
     break;
-  
+
   case 'list':
     auth(function(){
       metric.listMetricDescriptors(p.project, commonCb);
@@ -170,7 +171,7 @@ switch(p.type) {
 
 
 function commonCb(e,r,d) {
-  if(e) 
+  if(e)
     return log.error('ERROR', JSON.stringify(e));
   console.log((d));
 }

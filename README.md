@@ -189,6 +189,10 @@ gcmetric -h
 
 * See [API.md](API.md) for using this API in code.
 
+## Example - Memory Usage Metrics
+
+* See [sample.md](sample.md) for the sample that use gmetrics for insert memory usage data
+
 ## Hint
 
 * If you input json data, please make sure the txt is json format.
