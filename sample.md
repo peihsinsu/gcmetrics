@@ -33,10 +33,10 @@ Cloud Monitor is made by StackDriver and integrated to Google Cloud Platform, we
 
 Setting the dashboard chart...
 
-[setup dashboard chart](http://3.bp.blogspot.com/-TmiXOkzK1uo/VYrNhuTsE2I/AAAAAAAAlBo/EN7SksvTdTk/s1600/image-741850.png)
+![setup dashboard chart](http://3.bp.blogspot.com/-TmiXOkzK1uo/VYrNhuTsE2I/AAAAAAAAlBo/EN7SksvTdTk/s1600/image-741850.png)
 
 The chart from custom metric...
 
-[chart with custom metric](http://1.bp.blogspot.com/-NDBTte_w378/VYrNiP9s28I/AAAAAAAAlB0/UuappyYlA2M/s1600/%253D%253FUTF-8%253FB%253FQ3VzdG9tX01ldHJpY3NfRGFzaGJvYXJkX%252BKAk19EYXNoYm9hcmQucG5n%253F%253D-744557)
+![chart with custom metric](http://1.bp.blogspot.com/-NDBTte_w378/VYrNiP9s28I/AAAAAAAAlB0/UuappyYlA2M/s1600/%253D%253FUTF-8%253FB%253FQ3VzdG9tX01ldHJpY3NfRGFzaGJvYXJkX%252BKAk19EYXNoYm9hcmQucG5n%253F%253D-744557)
 
 
