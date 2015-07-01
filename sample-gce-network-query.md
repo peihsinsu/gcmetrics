@@ -14,7 +14,7 @@ gcmetric -t auth -s 288173501788-9fh14iojjmehakjtgkhoubdiaguppn1h@developer.gser
   -p mitac-cp300-taipei101
 ```
 
-## Query compute engine network相關metrics name：
+## Query compute engine network related metrics name：
 
 Before you query, you should know the metric name first..., you can use list command and grep to check the compute engine network related metric.
 
