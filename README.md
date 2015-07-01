@@ -9,6 +9,19 @@ This is a command line for interactive with google cloud platform - [cloud monit
 npm install gcmetric -g
 ```
 
+# Convert p12 key
+
+From admin console, create a service account, save the client_secrets.json and it's key ex: Translate p12 to pem
+
+```
+openssl pkcs12 -in privatekey.p12 -out privatekey.pem -nocerts
+openssl rsa -in privatekey.pem -out key.pem
+
+or
+
+openssl pkcs12 -in privatekey.p12 -nodes -nocerts > key.pem
+```
+
 # Commands
 
 ## Auth gcmetric command
@@ -189,9 +202,10 @@ gcmetric -h
 
 * See [API.md](API.md) for using this API in code.
 
-## Example - Memory Usage Metrics
+## Example
 
-* See [sample.md](sample.md) for the sample that use gmetrics for insert memory usage data
+* Memory Usage Metrics, See [sample.md](sample.md) for the sample that use gmetrics for insert memory usage data
+* Network metric of GCE instances, See [sample-gce-network-query.md](sample-gce-network-query.md) for detail.
 
 ## Hint
 
