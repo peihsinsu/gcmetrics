@@ -6,7 +6,7 @@ This is a command line for interactive with google cloud platform - [cloud monit
 # Installation
 
 ```
-npm install gcmetric -g
+npm install gcmetrics -g
 ```
 
 # Convert p12 key
