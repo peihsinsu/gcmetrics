@@ -6,7 +6,7 @@ gmetric API document
 You can use this module in your project...
 
 ```
-npm install gcmetric
+npm install gcmetrics
 ```
 
 # Auth
